@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static study.querydsl.entity.QMember.member;
 
 @SpringBootTest
 @Transactional
@@ -73,12 +74,38 @@ public class QuerydslBasicTest {
     @Test
     public void startQuerydsl2() {
         //member1을 찾아라.
-        QMember m = new QMember("m");
+        QMember m = new QMember("m");   //별칭 직접 지정
 
         Member findMember = queryFactory
                 .select(m)
                 .from(m)
                 .where(m.username.eq("member1"))    //파라미터 바인딩 처리
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    public void startQuerydsl2_5() {
+        //member1을 찾아라.
+        QMember qMember = QMember.member;   //기본 인스턴스 사용
+
+        Member findMember = queryFactory
+                .select(qMember)
+                .from(qMember)
+                .where(qMember.username.eq("member1"))    //파라미터 바인딩 처리
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    public void startQuerydsl3() {
+        //member1을 찾아라.
+        Member findMember = queryFactory
+                .select(member)
+                .from(member)
+                .where(member.username.eq("member1"))    //파라미터 바인딩 처리
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
