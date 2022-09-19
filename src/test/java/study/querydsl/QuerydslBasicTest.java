@@ -21,8 +21,12 @@ public class QuerydslBasicTest {
     @PersistenceContext
     EntityManager em;
 
+    JPAQueryFactory queryFactory;
+
     @BeforeEach
     public void before() {
+        queryFactory = new JPAQueryFactory(em);
+
         Team teamA = new Team("teamA");
         Team teamB = new Team("teamB");
         em.persist(teamA);
@@ -55,6 +59,20 @@ public class QuerydslBasicTest {
     public void startQuerydsl() {
         //member1을 찾아라.
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+        QMember m = new QMember("m");
+
+        Member findMember = queryFactory
+                .select(m)
+                .from(m)
+                .where(m.username.eq("member1"))    //파라미터 바인딩 처리
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    public void startQuerydsl2() {
+        //member1을 찾아라.
         QMember m = new QMember("m");
 
         Member findMember = queryFactory
