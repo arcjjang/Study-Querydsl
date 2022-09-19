@@ -1,5 +1,6 @@
 package study.querydsl;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,8 @@ import study.querydsl.entity.Team;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static study.querydsl.entity.QMember.member;
@@ -133,5 +136,33 @@ public class QuerydslBasicTest {
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    public void resultFetchTest() {
+        //List
+        List<Member> fetch = queryFactory
+                .selectFrom(member)
+                .fetch();
+
+        //단 건
+        Member findMember1 = queryFactory
+                .selectFrom(member)
+                .fetchOne();
+
+        //처음 한 건 조회
+        Member findMember2 = queryFactory
+                .selectFrom(member)
+                .fetchFirst();
+
+        //페이징에서 사용
+        QueryResults<Member> results = queryFactory
+                .selectFrom(member)
+                .fetchResults();    // Deprecated in SpringBoot2.6 & Querydsl 5.0
+
+        //count 쿼리로 변경
+        long count = queryFactory
+                .selectFrom(member)
+                .fetchCount();  // Deprecated in SpringBoot2.6 & Querydsl 5.0
     }
 }
